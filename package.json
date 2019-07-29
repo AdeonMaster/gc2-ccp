@@ -1,0 +1,16 @@
+{
+  "name": "gc2-ccp",
+  "version": "1.0.0",
+  "description": "Computer Vision - AI powered computer-controlled player for a Greedy Cave 2 mobile game",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --experimental-modules src/main.mjs"
+  },
+  "author": "AdeonMaster",
+  "license": "MIT",
+  "dependencies": {
+    "canvas": "^2.5.0",
+    "d3": "^5.9.7",
+    "node-matrices": "^1.0.0"
+  }
+}
