@@ -1,32 +1,36 @@
 import fs from 'fs';
+import Canvas from 'canvas';
 
-import { magic } from './@shaunlebron/canvas-arbitrary-quads';
+import { drawArbitraryQuadImage } from './@shaunlebron/canvas-arbitrary-quads';
+import Vector2D from './utils/Vector2D';
 
-class Vector2D {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-}
+const { loadImage, createCanvas } = Canvas;
+
+const srcPoints = [
+  new Vector2D(429, 125),
+  new Vector2D(590, 205),
+  new Vector2D(430, 289),
+  new Vector2D(270, 204)
+];
+
+const dstPoints = [
+  new Vector2D(0, 0),
+  new Vector2D(256, 0),
+  new Vector2D(256, 256),
+  new Vector2D(0, 256)
+];
 
 (async () => {
-  const srcPoints = [
-    new Vector2D(429, 125),
-    new Vector2D(590, 205),
-    new Vector2D(430, 289),
-    new Vector2D(270, 204)
-  ];
-  
-  const dstPoints = [
-    new Vector2D(0, 0),
-    new Vector2D(256, 0),
-    new Vector2D(256, 256),
-    new Vector2D(0, 256)
-  ];
+  const texture = await loadImage('gc2-screenshot.jpg');
 
-  const result = await magic('gc2-screenshot.jpg', srcPoints, dstPoints);
+  const canvas = createCanvas(dstPoints[2].x, dstPoints[2].y);
+  const ctx = canvas.getContext('2d');
+
+  drawArbitraryQuadImage(ctx, texture, srcPoints, dstPoints);
+
+  const result = canvas.toDataURL();
 
   fs.writeFile('report.html', '<html><body><img src="' + result + '" /></body></html>', error => {
-
+    error && console.log(error);
   });
 })();

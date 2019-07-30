@@ -16,5 +16,6 @@ export const forwardProjectionMatrixForPoints = points => {
   const d = points[1].y - points[0].y + g * points[1].y;
   const e = points[3].y - points[0].y + h * points[3].y;
   const f = points[0].y;
+
   return new Matrix([a, b, c], [d, e, f], [g, h, 1]);
 }
