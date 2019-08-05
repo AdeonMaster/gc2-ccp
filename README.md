@@ -15,6 +15,9 @@ Computer Vision - AI powered computer-controlled player for a Greedy Cave 2 mobi
 - http://sudokugrab.blogspot.com/2009/07/how-does-it-all-work.html
 - https://observablehq.com/@shaunlebron/texture-drawing-for-html-canvas
 
+# Fix node-gyp & VS2015 issue
+- https://github.com/nodejs/node-gyp/issues/1747#issuecomment-502210818
+
 # Possible cell classes
 - wall
 - pathway
