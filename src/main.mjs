@@ -1,7 +1,7 @@
 import fs from 'fs';
 import Canvas from 'canvas';
 
-import { drawArbitraryQuadImage } from './@shaunlebron/canvas-arbitrary-quads';
+import { drawArbitraryQuadImage } from './@adeon/canvas-arbitrary-quads';
 import Vector2D from './utils/Vector2D';
 
 const { loadImage, createCanvas } = Canvas;

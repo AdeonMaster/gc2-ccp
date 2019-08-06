@@ -1,3 +1,9 @@
+/*
+  Original author: Shaun Lebron
+  Original article: https://observablehq.com/@shaunlebron/texture-drawing-for-html-canvas
+  Description: This package is Shaun Lebron's article adaptation for NPM
+*/
+
 import { fillQuadTex } from './utils/fillQuadTex';
 import { tesselation, FILL_METHOD } from './constants';
 
