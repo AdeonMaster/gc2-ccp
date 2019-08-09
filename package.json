@@ -4,8 +4,7 @@
   "description": "Computer Vision - AI powered computer-controlled player for a Greedy Cave 2 mobile game",
   "main": "index.js",
   "scripts": {
-    "start": "node --experimental-modules src/main.mjs",
-    "ffi": "node --experimental-modules src/library_call_example.mjs"
+    "start": "node --experimental-modules src/main.mjs"
   },
   "author": "AdeonMaster",
   "license": "MIT",
