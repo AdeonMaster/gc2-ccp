@@ -1,18 +1,10 @@
 import Window from './window';
 
 setTimeout(() => {
-  const window = Window.findByTitle('main.mjs - gc2-ccp - Visual Studio Code');
-  const info = window.getInfo();
+  const window = Window.findByTitle('Calculator');
+  const info = window.getPlacement();
 
-  const { Top, Right, Bottom, Left } = info.rcWindow;
-  const xBorder = info.cxWindowBorders;
-  const yBorder = info.cyWindowBorders;
   console.log(info);
-  console.log({
-    x: Left,
-    y: Top
-  });
-
 }, 3000);
 
 // import fs from 'fs';

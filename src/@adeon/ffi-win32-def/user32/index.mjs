@@ -4,10 +4,11 @@ export default ffi.Library('user32.dll', {
   // window
   'FindWindowA': [ 'pointer', [ 'CString', 'CString' ] ],
   'GetForegroundWindow': [ 'pointer', [] ],
-  'GetWindowInfo': [ 'bool', [ 'pointer', 'pointer' ]],
-  'SetForegroundWindow': ['bool', ['pointer']],
+  'GetWindowInfo': [ 'bool', [ 'pointer', 'pointer' ] ],
+  'GetWindowPlacement': [ 'bool', [ 'pointer', 'pointer' ] ],
+  'SetForegroundWindow': [ 'bool', [ 'pointer' ] ],
 
   // cursor
-  'SetCursorPos': ['bool', ['int', 'int']],
-  'GetCursorPos': ['bool', [ 'pointer' ]]
+  'SetCursorPos': [ 'bool', [ 'int', 'int' ] ],
+  'GetCursorPos': [ 'bool', [ 'pointer' ] ]
 });

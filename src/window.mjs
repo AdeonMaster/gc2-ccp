@@ -1,5 +1,6 @@
 import User32 from './@adeon/ffi-win32-def/user32';
 import WINDOWINFO from './@adeon/ffi-win32-def/user32/structures/windowinfo';
+import WINDOWPLACEMENT from './@adeon/ffi-win32-def/user32/structures/windowplacement';
 
 export default class Window {
   constructor(hwnd) {
@@ -14,6 +15,16 @@ export default class Window {
     User32.GetWindowInfo(this.hwnd, windowinfo.ref());
 
     return windowinfo;
+  }
+
+  getPlacement() {
+    const windowplacement = new WINDOWPLACEMENT({
+      length: WINDOWPLACEMENT.size
+    });
+  
+    User32.GetWindowPlacement(this.hwnd, windowplacement.ref());
+
+    return windowplacement;
   }
 
   setForeground() {
