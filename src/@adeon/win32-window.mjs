@@ -1,21 +1,8 @@
 import ref from 'ref';
 
-import User32 from './@adeon/ffi-win32-def/user32';
-import WINDOWINFO from './@adeon/ffi-win32-def/user32/structures/windowinfo';
-import WINDOWPLACEMENT from './@adeon/ffi-win32-def/user32/structures/windowplacement';
-
-const transformRect = rect => {
-  const { Left, Top, Right, Bottom } = rect;
-
-  const x = Left;
-  const y = Top;
-  const width = Right - Left;
-  const height = Bottom - Top;
-
-  return {
-    x, y, width, height
-  };
-};
+import User32 from './ffi-win32-def/user32';
+import WINDOWINFO from './ffi-win32-def/user32/structures/windowinfo';
+import WINDOWPLACEMENT from './ffi-win32-def/user32/structures/windowplacement';
 
 export default class Window {
   constructor(hwnd) {
@@ -54,30 +41,6 @@ export default class Window {
     return User32.SetForegroundWindow(this.hwnd);
   }
 
-  // custom functions
-  getShownState() {
-    const windowPlacement = this.getPlacement();
-
-    return windowPlacement.showCmd;
-  }
-
-  getPosition() {
-    const info = this.getInfo();
-
-    const { rcWindow } = info;
-
-    return transformRect(rcWindow);
-  }
-
-  getViewportPosition() {
-    const info = this.getInfo();
-
-    const { rcClient } = info;
-
-    return transformRect(rcClient);
-  }
-
-  // static functions
   static findByTitle(title) {
     const hwnd = User32.FindWindowA(null, title);
 

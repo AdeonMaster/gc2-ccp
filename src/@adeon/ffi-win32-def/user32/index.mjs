@@ -6,6 +6,7 @@ export default ffi.Library('user32.dll', {
   'GetForegroundWindow': [ 'pointer', [] ],
   'GetWindowInfo': [ 'bool', [ 'pointer', 'pointer' ] ],
   'GetWindowPlacement': [ 'bool', [ 'pointer', 'pointer' ] ],
+  'GetWindowTextA': [ 'int', [ 'pointer', 'string', 'int' ] ],
   'SetForegroundWindow': [ 'bool', [ 'pointer' ] ],
 
   // cursor

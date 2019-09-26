@@ -1,10 +1,10 @@
-import Window from './window';
+import Window from './@adeon/win32-window';
 
 setTimeout(() => {
-  const window = Window.findByTitle('Calculator');
-  const info = window.getPlacement();
+  const window = Window.getForeground();
+  const text = window.getText();
 
-  console.log(info);
+  console.log(text);
 }, 3000);
 
 // import fs from 'fs';
