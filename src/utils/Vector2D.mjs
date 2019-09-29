@@ -3,4 +3,8 @@ export default class Vector2D {
     this.x = x;
     this.y = y;
   }
+
+  distance(v) {
+    return Math.hypot(this.x - v.x, this.y - v.y);
+  }
 }

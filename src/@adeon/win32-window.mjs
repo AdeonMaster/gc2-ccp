@@ -42,14 +42,10 @@ export default class Window {
   }
 
   static findByTitle(title) {
-    const hwnd = User32.FindWindowA(null, title);
-
-    return new Window(hwnd);
+    return User32.FindWindowA(null, title);
   }
 
   static getForeground() {
-    const hwnd = User32.GetForegroundWindow();
-
-    return new Window(hwnd);
+    return User32.GetForegroundWindow();
   }
 }
