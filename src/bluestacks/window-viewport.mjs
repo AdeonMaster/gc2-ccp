@@ -1,5 +1,5 @@
 import robotjs from 'robotjs';
-import { swapBufferChannels } from '../utils/image';
+import { swapBufferChannels, bitmapToImageData } from '../utils/image';
 
 export class WindowViewport {
   constructor(x, y, width, height) {
@@ -16,5 +16,9 @@ export class WindowViewport {
       ...bitmap,
       image: swapBufferChannels(bitmap.image)
     };
+  }
+
+  toImageData() {
+    return bitmapToImageData(this.capture());
   }
 }
