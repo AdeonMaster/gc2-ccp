@@ -1,8 +1,7 @@
 import fs from 'fs';
-import Canvas from 'canvas';
 import uuidv4 from 'uuid/v4';
 
-import { drawArbitraryQuadImage } from './@adeon/canvas-arbitrary-quads';
+import Canvas from './canvas';
 import Vector2D from './utils/Vector2D';
 import BlueStacksWindow from './bluestacks/window';
 
@@ -110,7 +109,7 @@ const tileCtx = tileCanvas.getContext('2d');
   quadmapPrepareCtx.drawImage(viewportCanvas, quadmapPrepareParams.offsetX, quadmapPrepareParams.offsetY);
 
   // apply quadliteral map
-  drawArbitraryQuadImage(quadmapCtx, quadmapPrepareCanvas, quadrilateralMapSrcPoints, quadrilateralMapDstPoints);
+  quadmapCtx.drawArbitraryQuadImage(quadmapPrepareCanvas, quadrilateralMapSrcPoints, quadrilateralMapDstPoints);
 
   // split quadmap grid into tiles
   const tiles = splitQuadMapIntoTiles(quadmapCtx, tileCanvas, tileCtx);

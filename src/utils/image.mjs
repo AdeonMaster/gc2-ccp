@@ -15,4 +15,3 @@ export const swapBufferChannels = buffer => {
 
 // robotjs bitmap to canvas imageData
 export const bitmapToImageData = ({ image, width, height }) => createImageData(new Uint8ClampedArray(image), width, height);
-

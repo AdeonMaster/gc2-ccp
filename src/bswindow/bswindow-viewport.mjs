@@ -1,7 +1,8 @@
 import robotjs from 'robotjs';
+
 import { swapBufferChannels, bitmapToImageData } from '../utils/image';
 
-export class WindowViewport {
+export default class BlueStacksWindowViewport {
   constructor(x, y, width, height) {
     this.x = x;
     this.y = y;

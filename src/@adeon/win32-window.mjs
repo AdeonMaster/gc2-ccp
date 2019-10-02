@@ -1,8 +1,7 @@
 import ref from 'ref';
 
-import User32 from './ffi-win32-def/user32';
-import WINDOWINFO from './ffi-win32-def/user32/structures/windowinfo';
-import WINDOWPLACEMENT from './ffi-win32-def/user32/structures/windowplacement';
+import User32 from './ffi-user32-def';
+import { WINDOWINFO, WINDOWPLACEMENT } from './ffi-user32-def/structures';
 
 export default class Window {
   constructor(hwnd) {
