@@ -1,36 +1,120 @@
 import fs from 'fs';
 import Canvas from 'canvas';
+import uuidv4 from 'uuid/v4';
 
 import { drawArbitraryQuadImage } from './@adeon/canvas-arbitrary-quads';
 import Vector2D from './utils/Vector2D';
+import BlueStacksWindow from './bluestacks/window';
 
-const { loadImage, createCanvas } = Canvas;
+const quadmapPrepareParams = {
+  width: 1560,
+  height: 776,
+  offsetX: 164,
+  offsetY: 42
+};
 
-const srcPoints = [
-  new Vector2D(429, 125),
-  new Vector2D(590, 205),
-  new Vector2D(430, 289),
-  new Vector2D(270, 204)
+const tilesInRow = 8;
+
+// initial quadrilateral map points (6x6 grid from 1232x693 viewport resolution) [found by hand]
+const quadrilateralMapSrcPoints = [
+  new Vector2D(0, 387),
+  new Vector2D(780, 0),
+  new Vector2D(1559, 388),
+  new Vector2D(779, 775)
 ];
 
-const dstPoints = [
+// calculate quadrilateral map result image width based on distance between two src points
+const quadrilateralMapQuadWidth = Math.round(quadrilateralMapSrcPoints[0].distance(quadrilateralMapSrcPoints[1]));
+
+// calculate tile width after quadrilateral map
+const tileWidth = quadrilateralMapQuadWidth / tilesInRow;
+
+const quadrilateralMapDstPoints = [
   new Vector2D(0, 0),
-  new Vector2D(256, 0),
-  new Vector2D(256, 256),
-  new Vector2D(0, 256)
+  new Vector2D(quadrilateralMapQuadWidth, 0),
+  new Vector2D(quadrilateralMapQuadWidth, quadrilateralMapQuadWidth),
+  new Vector2D(0, quadrilateralMapQuadWidth)
 ];
+
+const splitQuadMapIntoTiles = (quadmapCtx, tileCanvas, tileCtx) => {
+  const tiles = [];
+
+  for(let col = 0; col < tilesInRow; ++col) {
+    const column = [];
+
+    for(let row = 0; row < tilesInRow; ++row) {
+      const tileImageData = quadmapCtx.getImageData(tileWidth * row, tileWidth * col, tileWidth, tileWidth);
+      tileCtx.putImageData(tileImageData, 0, 0);
+
+      column.push(tileCanvas.toDataURL());
+    }
+
+    tiles.push(column);
+  }
+
+  return tiles;
+};
+
+const generateDatasetShapshots = (viewportCanvas, quadmapCanvas, tiles) => {
+  const uuid = uuidv4();
+  const dirPath = `shapshots/${uuid}`;
+
+  const viewportImage = viewportCanvas.toDataURL();
+  const quadmapImage = quadmapCanvas.toDataURL();
+
+  if (!fs.existsSync(dirPath)){
+    fs.mkdirSync(dirPath);
+
+    fs.writeFileSync(
+      `${dirPath}/view.html`,
+      `<html>
+        <body>
+          <img src="${viewportImage}" />
+          <br/>
+          <img src="${quadmapImage}" />
+          <br/>
+          ${tiles.map(row => row.map(col => `<img src="${col}" />`).join('')).join('<br/>')}
+        </body>
+      </html>`
+    );
+  } else {
+    console.log('Error while creating shapshot. UUID in use ?');
+  }
+};
+
+const viewportCanvas = Canvas.createCanvas(0, 0);
+const quadmapPrepareCanvas = Canvas.createCanvas(quadmapPrepareParams.width, quadmapPrepareParams.height);
+const quadmapCanvas = Canvas.createCanvas(quadrilateralMapQuadWidth, quadrilateralMapQuadWidth);
+const tileCanvas = Canvas.createCanvas(tileWidth, tileWidth);
+
+const viewportCtx = viewportCanvas.getContext('2d');
+const quadmapPrepareCtx = quadmapPrepareCanvas.getContext('2d');
+const quadmapCtx = quadmapCanvas.getContext('2d');
+const tileCtx = tileCanvas.getContext('2d');
 
 (async () => {
-  const texture = await loadImage('gc2-screenshot.jpg');
+  // init bs window
+  const bswindow = new BlueStacksWindow();
+  bswindow.setForeground();
 
-  const canvas = createCanvas(dstPoints[2].x, dstPoints[2].y);
-  const ctx = canvas.getContext('2d');
+  // get viewport image data
+  const viewport = bswindow.getViewport();
+  const viewportImageData = viewport.toImageData();
 
-  drawArbitraryQuadImage(ctx, texture, srcPoints, dstPoints);
+  // draw viewport image on canvas
+  viewportCanvas.width = viewport.width;
+  viewportCanvas.height = viewport.height;
+  viewportCtx.putImageData(viewportImageData, 0, 0);
 
-  const result = canvas.toDataURL();
+  // draw viewport image on quadmap prepare canvas
+  quadmapPrepareCtx.drawImage(viewportCanvas, quadmapPrepareParams.offsetX, quadmapPrepareParams.offsetY);
 
-  fs.writeFile('report.html', '<html><body><img src="' + result + '" /></body></html>', error => {
-    error && console.log(error);
-  });
+  // apply quadliteral map
+  drawArbitraryQuadImage(quadmapCtx, quadmapPrepareCanvas, quadrilateralMapSrcPoints, quadrilateralMapDstPoints);
+
+  // split quadmap grid into tiles
+  const tiles = splitQuadMapIntoTiles(quadmapCtx, tileCanvas, tileCtx);
+
+  // generate dataset snapshot
+  generateDatasetShapshots(viewportCanvas, quadmapCanvas, tiles);
 })();
