@@ -1,4 +1,3 @@
 node_modules/
-static/css/
-static/js/
+snapshots/
 package-lock.json
