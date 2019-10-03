@@ -3,7 +3,7 @@ import uuidv4 from 'uuid/v4';
 
 import Canvas from './canvas';
 import Vector2D from './utils/Vector2D';
-import BlueStacksWindow from './bluestacks/window';
+import BlueStacksWindow from './bswindow';
 
 const quadmapPrepareParams = {
   width: 1560,
@@ -35,6 +35,30 @@ const quadrilateralMapDstPoints = [
   new Vector2D(0, quadrilateralMapQuadWidth)
 ];
 
+const isCornerTile = (x, y) => {
+  const current = new Vector2D(x, y);
+
+  const tiles = [
+    new Vector2D(0, 0),
+    new Vector2D(1, 0),
+    new Vector2D(0, 1),
+
+    new Vector2D(6, 0),
+    new Vector2D(7, 0),
+    new Vector2D(7, 1),
+
+    new Vector2D(0,6),
+    new Vector2D(7,0),
+    new Vector2D(7,1),
+
+    new Vector2D(6, 7),
+    new Vector2D(7, 7),
+    new Vector2D(7, 6)
+  ];
+
+  return tiles.some(tile => tile.equals(current));
+}
+
 const splitQuadMapIntoTiles = (quadmapCtx, tileCanvas, tileCtx) => {
   const tiles = [];
 
@@ -42,8 +66,13 @@ const splitQuadMapIntoTiles = (quadmapCtx, tileCanvas, tileCtx) => {
     const column = [];
 
     for(let row = 0; row < tilesInRow; ++row) {
-      const tileImageData = quadmapCtx.getImageData(tileWidth * row, tileWidth * col, tileWidth, tileWidth);
-      tileCtx.putImageData(tileImageData, 0, 0);
+      if (isCornerTile(col, row)) {
+        tileCtx.fillStyle = 'red';
+        tileCtx.fillRect(0, 0, tileWidth, tileWidth);
+      } else {
+        const tileImageData = quadmapCtx.getImageData(tileWidth * row, tileWidth * col, tileWidth, tileWidth);
+        tileCtx.putImageData(tileImageData, 0, 0);
+      }
 
       column.push(tileCanvas.toDataURL());
     }
@@ -54,12 +83,16 @@ const splitQuadMapIntoTiles = (quadmapCtx, tileCanvas, tileCtx) => {
   return tiles;
 };
 
-const generateDatasetShapshots = (viewportCanvas, quadmapCanvas, tiles) => {
+const generateDatasetSnapshots = (viewportCanvas, quadmapCanvas, tiles) => {
   const uuid = uuidv4();
-  const dirPath = `shapshots/${uuid}`;
+  const dirPath = `snapshots/${uuid}`;
 
   const viewportImage = viewportCanvas.toDataURL();
   const quadmapImage = quadmapCanvas.toDataURL();
+
+  if (!fs.existsSync('snapshots')){
+    fs.mkdirSync('snapshots');
+  }
 
   if (!fs.existsSync(dirPath)){
     fs.mkdirSync(dirPath);
@@ -115,5 +148,5 @@ const tileCtx = tileCanvas.getContext('2d');
   const tiles = splitQuadMapIntoTiles(quadmapCtx, tileCanvas, tileCtx);
 
   // generate dataset snapshot
-  generateDatasetShapshots(viewportCanvas, quadmapCanvas, tiles);
+  generateDatasetSnapshots(viewportCanvas, quadmapCanvas, tiles);
 })();
