@@ -1,9 +1,16 @@
 import fs from 'fs';
 import uuidv4 from 'uuid/v4';
+import open from 'open';
 
 import Canvas from './canvas';
 import Vector2D from './utils/Vector2D';
 import BlueStacksWindow from './bswindow';
+
+const CLASSES = {
+  WALL: 'wall',
+  PATH: 'path',
+  ENEMY: 'enemy'
+};
 
 const quadmapPrepareParams = {
   width: 1560,
@@ -66,13 +73,13 @@ const splitQuadMapIntoTiles = (quadmapCtx, tileCanvas, tileCtx) => {
     const column = [];
 
     for(let row = 0; row < tilesInRow; ++row) {
-      if (isCornerTile(col, row)) {
-        tileCtx.fillStyle = 'red';
-        tileCtx.fillRect(0, 0, tileWidth, tileWidth);
-      } else {
+      // if (isCornerTile(col, row)) {
+      //   tileCtx.fillStyle = 'red';
+      //   tileCtx.fillRect(0, 0, tileWidth, tileWidth);
+      // } else {
         const tileImageData = quadmapCtx.getImageData(tileWidth * row, tileWidth * col, tileWidth, tileWidth);
         tileCtx.putImageData(tileImageData, 0, 0);
-      }
+      // }
 
       column.push(tileCanvas.toDataURL());
     }
@@ -87,8 +94,8 @@ const generateDatasetSnapshots = (viewportCanvas, quadmapCanvas, tiles) => {
   const uuid = uuidv4();
   const dirPath = `snapshots/${uuid}`;
 
-  const viewportImage = viewportCanvas.toDataURL();
-  const quadmapImage = quadmapCanvas.toDataURL();
+  // const viewportImage = viewportCanvas.toDataURL();
+  // const quadmapImage = quadmapCanvas.toDataURL();
 
   if (!fs.existsSync('snapshots')){
     fs.mkdirSync('snapshots');
@@ -100,15 +107,25 @@ const generateDatasetSnapshots = (viewportCanvas, quadmapCanvas, tiles) => {
     fs.writeFileSync(
       `${dirPath}/view.html`,
       `<html>
+        <head>
+          <style>
+            .cell {
+              border: 1px solid red;
+            }
+            .select {
+              position: absolute;
+            }
+          </style>
+        </head>
         <body>
-          <img src="${viewportImage}" />
-          <br/>
-          <img src="${quadmapImage}" />
-          <br/>
-          ${tiles.map(row => row.map(col => `<img src="${col}" />`).join('')).join('<br/>')}
+          ${tiles.map((row, rowIndex) => row.map((col, colIndex) => `<select class="select" data-row-index="${rowIndex}" data-col-index="${colIndex}">${(Object.keys(CLASSES).map(classKey => `<option value="${CLASSES[classKey]}">${CLASSES[classKey]}</option>`)).join(' ')}</select><img class="cell" src="${col}" />`).join('')).join('<br/>')}
+          <br />
+          <button>Save</button>
         </body>
       </html>`
     );
+
+    open(`${dirPath}/view.html`);
   } else {
     console.log('Error while creating shapshot. UUID in use ?');
   }
