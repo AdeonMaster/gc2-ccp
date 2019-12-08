@@ -1,7 +1,12 @@
 import Win32Window from '../@adeon/win32-window';
 
-import { BSWINDOW } from './constants';
-import BlueStacksWindowViewport from './bswindow-viewport';
+import WindowViewport from './window-viewport';
+
+export const BSWINDOW = {
+  BORDER: 1,
+  HEADER: 40,
+  INNER_PADDING: 6
+};
 
 export default class BluestacksWindow {
   constructor() {
@@ -48,6 +53,6 @@ export default class BluestacksWindow {
     const width = Right - Left;
     const height = Bottom - Top;
 
-    return new BlueStacksWindowViewport(x, y, width, height);
+    return new WindowViewport(x, y, width, height);
   }
 };
